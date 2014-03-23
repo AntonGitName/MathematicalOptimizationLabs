@@ -54,11 +54,11 @@ void getDualProblem(const vvd& a, vd& b, vd& c, vvd& dual_a, vd& dual_b, vd& dua
 {
     for (auto x : b)
     {
-        dual_c.push_back(x);
+        dual_c.push_back(-x);
     }
     for (auto x : c)
     {
-        dual_b.push_back(x);
+        dual_b.push_back(-x);
     }
     dual_a.assign(a[0].size(), vd());
     for (size_t i = 0; i < a.size(); ++i)
@@ -122,7 +122,7 @@ void getCanonicalMatrix(vvd& a, vd& b, vd& c, const vc& sign, const vc& type)
     c = c1;    
 }
 
-void printResult(const linearProgramming::SlackForm& condition, const vc& sign)
+void printResult(const linearProgramming::SlackForm& condition, const vc& sign, bool f = true)
 {
     auto vars = condition.getResult();
     for (size_t i = 0, k = 0; i < sign.size(); ++i)
@@ -138,7 +138,14 @@ void printResult(const linearProgramming::SlackForm& condition, const vc& sign)
         cout << "\t";
     }
     cout << endl;
-    cout << "MAX = " << condition.getV() << endl;
+	if (f)
+	{
+		cout << "MAX = " << condition.getV() << endl;
+	}
+	else
+	{
+		cout << "MAX = " << -condition.getV() << endl;
+	}
 }
 
 int main()
@@ -191,7 +198,7 @@ int main()
     cout << "\nAll vertexes\n";
     printResult(linearProgramming::allVertexesCheck(a, b, c), sign);
     cout << "\nDual problem simplex\n";
-    printResult(linearProgramming::simplex(a, b, c), sign);
+	printResult(linearProgramming::simplex(dual_a, dual_b, dual_c), sign, false);
 
 
     return 0;
