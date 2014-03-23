@@ -52,5 +52,21 @@ int main()
         cout << endl;
     }
     cout << total_sum << endl;
+
+	plan = transportation::solveBySimplex(a, b, c);
+
+	total_sum = 0;
+
+	for (size_t i = 0; i < plan.size(); ++i)
+	{
+		for (size_t j = 0; j < plan[i].size(); ++j)
+		{
+			cout << plan[i][j] << "\t";
+			total_sum += plan[i][j] * a[i][j];
+		}
+		cout << endl;
+	}
+	cout << total_sum << endl;
+
     return 0;
 }

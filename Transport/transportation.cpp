@@ -256,4 +256,62 @@ bool func(pair<int, int> p, const set< pair<int, int> >& base_cells,
 
         return plan;
     }
+
+	vvd solveBySimplex(const vvd& a, const vd& b, const vd& c)
+	{
+		size_t n = b.size() * c.size();
+		size_t m = b.size() + c.size();
+		vvd simplexA(m, vd(n));
+		vd simplexB;
+		vd simplexC(n);
+
+		for (size_t i = 0; i < a.size(); ++i)
+		{
+			for (size_t j = 0; j < a[i].size(); ++j)
+			{
+				simplexC[j + i * c.size()] = -a[i][j];
+			}
+		}
+
+		for (auto x : c)
+		{
+			simplexB.push_back(-x);
+		}
+
+		for (auto x : b)
+		{
+			simplexB.push_back(-x);
+		}
+
+		for (size_t i = 0; i < c.size(); ++i)
+		{
+			for (size_t j = 0; j < b.size(); ++j)
+			{
+				simplexA[i][j + i * c.size()] = 1;
+			}
+		}
+
+		for (size_t i = 0; i < b.size(); ++i)
+		{
+			for (size_t j = 0; j < c.size(); ++j)
+			{
+				simplexA[i + c.size()][j + i * c.size()] = 1;
+			}
+		}
+
+		linearProgramming::SlackForm form = linearProgramming::simplex(simplexA, simplexB, simplexC);
+		vd res = form.getResult();
+		vvd matrix = a;
+		for (size_t i = 0; i < a.size(); ++i)
+		{
+			for (size_t j = 0; j < a[i].size(); ++j)
+			{
+				matrix[i][j] = res[j + i * c.size()];
+			}
+		}
+
+		return matrix;
+	}
+
+	
 }
