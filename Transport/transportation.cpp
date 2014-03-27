@@ -161,6 +161,22 @@ bool func(pair<int, int> p, const set< pair<int, int> >& base_cells,
             }
         }
 
+		while (base_cells.size() < n + m - 1)
+		{
+			bool f = true;
+			for (size_t i = 0; (i < n) && f; ++i)
+			{
+				for (size_t j = 0; (j < m) && f; ++j)
+				{
+					if (!base_cells.count(make_pair(i, j)))
+					{
+						base_cells.insert(make_pair(i, j));
+						f = false;
+					}
+				}
+			}
+		}
+
         while (!isOptimal)
         {
 
@@ -261,7 +277,7 @@ bool func(pair<int, int> p, const set< pair<int, int> >& base_cells,
 	{
 		size_t n = b.size() * c.size();
 		size_t m = b.size() + c.size();
-		vvd simplexA(m, vd(n));
+		vvd simplexA(2 * m, vd(n));
 		vd simplexB;
 		vd simplexC(n);
 
@@ -273,29 +289,33 @@ bool func(pair<int, int> p, const set< pair<int, int> >& base_cells,
 			}
 		}
 
-		for (auto x : c)
-		{
-			simplexB.push_back(-x);
-		}
-
 		for (auto x : b)
 		{
+			simplexB.push_back(x);
 			simplexB.push_back(-x);
 		}
 
-		for (size_t i = 0; i < c.size(); ++i)
+		for (auto x : c)
 		{
-			for (size_t j = 0; j < b.size(); ++j)
-			{
-				simplexA[i][j + i * c.size()] = 1;
-			}
+			simplexB.push_back(x);
+			simplexB.push_back(-x);
 		}
 
 		for (size_t i = 0; i < b.size(); ++i)
 		{
 			for (size_t j = 0; j < c.size(); ++j)
 			{
-				simplexA[i + c.size()][j + i * c.size()] = 1;
+				simplexA[2 * i][j + i * c.size()] = 1;
+				simplexA[2 * i + 1][j + i * c.size()] = -1;
+			}
+		}
+
+		for (size_t i = 0; i < c.size(); ++i)
+		{
+			for (size_t j = 0; j < b.size(); ++j)
+			{
+				simplexA[2*i + 2*b.size()][i + j * c.size()] = 1;
+				simplexA[2*i+1 + 2*b.size()][i + j * c.size()] = -1;
 			}
 		}
 
